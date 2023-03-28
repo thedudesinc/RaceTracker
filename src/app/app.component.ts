@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 
 @Component({
@@ -9,8 +9,29 @@ import { initFlowbite } from 'flowbite';
 export class AppComponent implements OnInit {
   title = 'RaceTracker';
 
-  ngOnInit(): void {
-    initFlowbite();
+  constructor(private renderer: Renderer2) {
   }
 
+  ngOnInit(): void {
+    initFlowbite();
+    this.initTheme();
+  }
+
+  initTheme(): void {
+    const theme = localStorage.getItem('theme');
+    this.renderer.addClass(document.body, theme || 'dark');
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  changeTheme(event: KeyboardEvent): void {
+    if (event.keyCode !== 37) return;
+
+    const theme = localStorage.getItem('theme') || 'dark';
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+
+    ['light', 'dark'].forEach((t) => this.renderer.removeClass(document.body, t));
+
+    this.renderer.addClass(document.body, newTheme);
+    localStorage.setItem('theme', newTheme);
+  }
 }
