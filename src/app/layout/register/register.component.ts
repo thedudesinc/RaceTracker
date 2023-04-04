@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ControlsOf } from 'src/app/helpers/helper.types';
 import { LoadingService } from 'src/app/services/loading.service';
 import { UserInput } from 'src/app/services/models/user.model';
@@ -22,12 +23,13 @@ export class RegisterComponent {
     type: new FormControl(UserType.Driver, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  constructor(private userService: UserService, private loadingService: LoadingService) { }
+  constructor(private userService: UserService, private loadingService: LoadingService, private router: Router) { }
 
   onSubmit(): void {
     this.loadingService.isLoadingVisible.next(true);
     this.userService.create(this.userForm.getRawValue()).subscribe((response) => {
-      this.loadingService.isLoadingVisible.next(false);;
+      this.loadingService.isLoadingVisible.next(false);
+      this.router.navigate(['/login']);
     });
   }
 }
