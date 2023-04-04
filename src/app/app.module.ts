@@ -7,18 +7,22 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './layout/login/login.component';
 import { RegisterComponent } from './layout/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoadingComponent } from './layout/loading/loading.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

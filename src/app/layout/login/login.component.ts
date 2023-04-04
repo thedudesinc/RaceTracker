@@ -4,6 +4,7 @@ import { ControlsOf } from 'src/app/helpers/helper.types';
 import { LoginInput } from 'src/app/services/models/authentication.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -17,11 +18,12 @@ export class LoginComponent {
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
-  constructor(private authenticationService: AuthenticationService, private router: Router) { }
+  constructor(private authenticationService: AuthenticationService, private router: Router, private loadingService: LoadingService) { }
 
   onSubmit(): void {
+    this.loadingService.isLoadingVisible.next(true);
     this.authenticationService.post(this.loginForm.getRawValue()).subscribe((response) => {
-      console.log(response);
+      this.loadingService.isLoadingVisible.next(false);
       this.router.navigate(['/']);
     });
 
