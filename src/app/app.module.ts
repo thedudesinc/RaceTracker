@@ -9,13 +9,15 @@ import { RegisterComponent } from './layout/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './layout/loading/loading.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SidenavComponent } from './layout/sidenav/sidenav.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    LoadingComponent
+    LoadingComponent,
+    SidenavComponent
   ],
   imports: [
     BrowserModule,

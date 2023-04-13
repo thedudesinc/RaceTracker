@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable, map } from 'rxjs';
 import { ControlsOf } from 'src/app/helpers/helper.types';
 import { LoadingService } from 'src/app/services/loading.service';
 import { UserInput } from 'src/app/services/models/user.model';
@@ -15,13 +16,19 @@ import { UserService } from 'src/app/services/user.service';
 export class RegisterComponent {
 
   userForm: FormGroup<ControlsOf<UserInput>> = new FormGroup<ControlsOf<UserInput>>({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    phone: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)] }),
+    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)] }),
+    phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern('[0-9]{3}-[0-9]{3}-[0-9]{4}')] }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email], asyncValidators: [EmailValidator.createValidator(this.userService)] }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6), Validators.maxLength(100)] }),
     type: new FormControl(UserType.Driver, { nonNullable: true, validators: [Validators.required] }),
   });
+
+  get firstName() { return this.userForm.get('firstName'); }
+  get lastName() { return this.userForm.get('lastName'); }
+  get phone() { return this.userForm.get('phone'); }
+  get email() { return this.userForm.get('email'); }
+  get password() { return this.userForm.get('password'); }
 
   constructor(private userService: UserService, private loadingService: LoadingService, private router: Router) { }
 
@@ -31,5 +38,19 @@ export class RegisterComponent {
       this.loadingService.isLoadingVisible.next(false);
       this.router.navigate(['/login']);
     });
+  }
+}
+
+export class EmailValidator {
+  static createValidator(userService: UserService): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return userService
+        .verifyEmail(control.value)
+        .pipe(
+          map((result: boolean) =>
+            result ? null : { emailAlreadyExists: true }
+          )
+        );
+    };
   }
 }
