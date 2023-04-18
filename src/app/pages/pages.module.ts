@@ -8,7 +8,8 @@ import { HeaderComponent } from '../layout/header/header.component';
 const routes: Routes = [
   {
     path: '', component: PagesComponent, children: [
-      { path: '', component: HomeComponent }
+      { path: '', component: HomeComponent },
+      { path: 'events', loadChildren: () => import('./events/events.module').then(m => m.EventsModule) }
     ]
   }
 ];
