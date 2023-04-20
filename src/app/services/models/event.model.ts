@@ -1,22 +1,17 @@
-import { UserType } from "../types/user.types";
+import { EventType } from "../types/event.types";
 
-export interface UserInput {
-  email: string;
-  type: UserType;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  password: string;
+export interface EventInput {
+  name: string;
+  date: string;
+  type: EventType;
 }
 
-export interface UserOutput {
+export interface EventOutput {
   id: string;
-  email: string;
-  type: UserType;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  dateCreated: string;
-  dateModified: string;
-  dateDeleted: string | null;
+  name: string;
+  date: Date;
+  type: EventType;
+  dateCreated: Date;
+  dateModified: Date;
+  dateDeleted: Date | null;
 }

@@ -2,26 +2,21 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { UserInput, UserOutput } from './models/user.model';
+import { EventInput, EventOutput } from './models/event.model';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
-  baseUrl = environment.baseUrl + '/users';
+export class EventService extends BaseService {
+  baseUrl = environment.baseUrl + '/events';
 
-  constructor(private http: HttpClient) { }
-
-  create(user: UserInput): Observable<UserOutput> {
-    return this.http.post<UserOutput>(this.baseUrl, user);
+  constructor(private http: HttpClient) {
+    super();
   }
 
-  verifyEmail(email: string): Observable<boolean> {
-    return this.http.post<boolean>(this.baseUrl + '/verifyemail', `"${email}"`, {
-      headers:
-        new HttpHeaders({
-          'Content-Type': 'application/json',
-        })
-    });
+  create(event: EventInput): Observable<EventOutput> {
+    return this.http.post<EventOutput>(this.baseUrl, event, { headers: this.getHeaders() });
   }
+
 }
