@@ -18,14 +18,20 @@ export class LoginComponent {
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
+  showLoginError = false;
+
   constructor(private authenticationService: AuthenticationService, private router: Router, private loadingService: LoadingService) { }
 
   onSubmit(): void {
     this.loadingService.isLoadingVisible.next(true);
-    this.authenticationService.post(this.loginForm.getRawValue()).subscribe((response) => {
+    this.authenticationService.login(this.loginForm.getRawValue()).subscribe((isAuthenticated) => {
       this.loadingService.isLoadingVisible.next(false);
-      this.router.navigate(['/']);
-    });
 
+      if (isAuthenticated) {
+        this.router.navigate(['/']);
+      } else {
+        this.showLoginError = true
+      }
+    });
   }
 }
