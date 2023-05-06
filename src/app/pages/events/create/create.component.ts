@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ControlsOf } from 'src/app/helpers/helper.types';
@@ -19,7 +19,7 @@ export class CreateComponent implements OnInit {
 
   eventForm: FormGroup<ControlsOf<EventInput>> = new FormGroup<ControlsOf<EventInput>>({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)] }),
-    date: new FormControl(new Date(), { nonNullable: true, validators: [Validators.required,] }),
+    date: new FormControl(new Date().toLocaleDateString(), { nonNullable: true }),
     type: new FormControl(EventType.Default, { nonNullable: true, validators: [Validators.required,] }),
   });
 
@@ -28,18 +28,25 @@ export class CreateComponent implements OnInit {
   get type() { return this.eventForm.get('type'); }
 
   calendarIcon = faCalendar;
+  datepickerValue = '';
 
-  constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router) { }
+  constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     const datepickerEl = document.getElementById('datepickerCreateEvent');
     new Datepicker(datepickerEl, {
-      autohide: true,
-      readonly: true
+      autohide: true
     });
   }
 
+  onDatepickerChange(value: string): void {
+    console.log(value);
+    this.eventForm.controls.date.patchValue(value);
+  }
+
   onSubmit(): void {
+    this.changeDetector.detectChanges();
+    console.log(this.datepickerValue);
     this.loadingService.isLoadingVisible.next(true);
     this.eventService.create(this.eventForm.getRawValue()).subscribe((response) => {
       this.loadingService.isLoadingVisible.next(false);
