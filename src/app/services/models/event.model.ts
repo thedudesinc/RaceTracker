@@ -2,7 +2,7 @@ import { EventType } from "../types/event.types";
 
 export interface EventInput {
   name: string;
-  date: string;
+  date: Date;
   type: EventType;
 }
 
