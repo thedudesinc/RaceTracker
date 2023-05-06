@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ControlsOf } from 'src/app/helpers/helper.types';
@@ -12,11 +12,11 @@ import { EventType } from 'src/app/services/types/event.types';
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss']
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit {
 
   eventForm: FormGroup<ControlsOf<EventInput>> = new FormGroup<ControlsOf<EventInput>>({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)] }),
-    date: new FormControl('', { nonNullable: true, validators: [Validators.required,] }),
+    date: new FormControl(new Date(), { nonNullable: true, validators: [Validators.required,] }),
     type: new FormControl(EventType.Default, { nonNullable: true, validators: [Validators.required,] }),
   });
 
@@ -25,6 +25,12 @@ export class CreateComponent {
   get type() { return this.eventForm.get('type'); }
 
   constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router) { }
+
+  ngOnInit(): void {
+    const datepickerEl = document.getElementById('datepickerId');
+    new Datepicker(datepickerEl, {
+    });
+  }
 
   onSubmit(): void {
     this.loadingService.isLoadingVisible.next(true);

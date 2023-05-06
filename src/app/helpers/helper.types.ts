@@ -1,7 +1,9 @@
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormArray, FormControl, FormGroup } from "@angular/forms";
 
 export type ControlsOf<T extends Record<string, any>> = {
-  [K in keyof T]: T[K] extends Record<any, any>
+  [K in keyof T]: T[K] extends Date
+  ? FormControl<Date>
+  : T[K] extends Record<any, any>
   ? FormGroup<ControlsOf<T[K]>>
   : FormControl<T[K]>;
 };
