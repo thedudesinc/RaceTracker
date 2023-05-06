@@ -6,6 +6,9 @@ import { EventService } from 'src/app/services/event.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { EventInput } from 'src/app/services/models/event.model';
 import { EventType } from 'src/app/services/types/event.types';
+import { faCalendar } from '@fortawesome/free-solid-svg-icons';
+
+declare var Datepicker: any;
 
 @Component({
   selector: 'app-create',
@@ -24,11 +27,15 @@ export class CreateComponent implements OnInit {
   get date() { return this.eventForm.get('date'); }
   get type() { return this.eventForm.get('type'); }
 
+  calendarIcon = faCalendar;
+
   constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router) { }
 
   ngOnInit(): void {
-    const datepickerEl = document.getElementById('datepickerId');
+    const datepickerEl = document.getElementById('datepickerCreateEvent');
     new Datepicker(datepickerEl, {
+      autohide: true,
+      readonly: true
     });
   }
 
