@@ -25,12 +25,11 @@ export class LoginComponent {
   onSubmit(): void {
     this.loadingService.isLoadingVisible.next(true);
     this.authenticationService.login(this.loginForm.getRawValue()).subscribe((isAuthenticated) => {
-      this.loadingService.isLoadingVisible.next(false);
-
       if (isAuthenticated) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then(() => this.loadingService.isLoadingVisible.next(false));
       } else {
-        this.showLoginError = true
+        this.showLoginError = true;
+        this.loadingService.isLoadingVisible.next(false);
       }
     });
   }

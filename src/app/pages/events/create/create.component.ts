@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ControlsOf } from 'src/app/helpers/helper.types';
@@ -19,36 +19,34 @@ export class CreateComponent implements OnInit {
 
   eventForm: FormGroup<ControlsOf<EventInput>> = new FormGroup<ControlsOf<EventInput>>({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)] }),
-    date: new FormControl(new Date().toLocaleDateString(), { nonNullable: true }),
+    date: new FormControl(new Date().toLocaleDateString() as unknown as Date, { nonNullable: true }),
     type: new FormControl(EventType.Default, { nonNullable: true, validators: [Validators.required,] }),
   });
 
-  get name() { return this.eventForm.get('name'); }
-  get date() { return this.eventForm.get('date'); }
-  get type() { return this.eventForm.get('type'); }
+  get name() { return this.eventForm.controls.name; }
+  get date() { return this.eventForm.controls.date; }
+  get type() { return this.eventForm.controls.type; }
 
   calendarIcon = faCalendar;
-  datepickerValue = '';
 
-  constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router, private changeDetector: ChangeDetectorRef) { }
+  constructor(private eventService: EventService, private loadingService: LoadingService, private router: Router) { }
 
   ngOnInit(): void {
     const datepickerEl = document.getElementById('datepickerCreateEvent');
     new Datepicker(datepickerEl, {
       autohide: true
     });
-  }
 
-  onDatepickerChange(value: string): void {
-    console.log(value);
-    this.eventForm.controls.date.patchValue(value);
+    if (datepickerEl) {
+      datepickerEl.addEventListener("changeDate", (event) => {
+        this.eventForm.controls.date.patchValue((event.target as HTMLInputElement).value as unknown as Date);
+      });
+    }
   }
 
   onSubmit(): void {
-    this.changeDetector.detectChanges();
-    console.log(this.datepickerValue);
     this.loadingService.isLoadingVisible.next(true);
-    this.eventService.create(this.eventForm.getRawValue()).subscribe((response) => {
+    this.eventService.create({ ...this.eventForm.getRawValue(), date: new Date(this.date.value) }).subscribe((response) => {
       this.loadingService.isLoadingVisible.next(false);
       this.router.navigate(['/events/list']);
     });
