@@ -18,5 +18,8 @@ export class EventService extends BaseService {
   create(event: EventInput): Observable<EventOutput> {
     return this.http.post<EventOutput>(this.baseUrl, JSON.stringify(event), { headers: this.getHeaders() });
   }
+  getAll(): Observable<EventOutput[]> {
+    return this.http.get<EventOutput[]>(this.baseUrl, { headers: this.getHeaders() });
+  }
 
 }
